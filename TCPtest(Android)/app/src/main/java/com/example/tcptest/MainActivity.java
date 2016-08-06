@@ -195,6 +195,20 @@ public class MainActivity extends Activity {
                                 public void run() {
                                     mButtonSendOne.setVisibility(View.INVISIBLE);
                                     mButtonSendTwo.setVisibility(View.INVISIBLE);
+                                    mSheekImage.setVisibility(View.INVISIBLE);
+                                    mLoadingAnimation.setVisibility(View.VISIBLE);
+                                    mWaitImageView.setVisibility(View.VISIBLE);
+                                    mLoadingAnimation.start();
+                                    //動画が停止したら、シークバーを最初に戻して再度スタート
+                                    mLoadingAnimation.setOnCompletionListener(new MediaPlayer.OnCompletionListener(){
+                                        @Override
+                                        public void onCompletion(MediaPlayer mp) {
+                                            // 先頭に戻す
+                                            mLoadingAnimation.seekTo(0);
+                                            // 再生開始
+                                            mLoadingAnimation.start();
+                                        }
+                                    });
 
                                     Toast.makeText(MainActivity.this, "1に投票しました", Toast.LENGTH_SHORT).show();
                                 }
@@ -234,6 +248,20 @@ public class MainActivity extends Activity {
                                 public void run() {
                                     mButtonSendOne.setVisibility(View.INVISIBLE);
                                     mButtonSendTwo.setVisibility(View.INVISIBLE);
+                                    mSheekImage.setVisibility(View.INVISIBLE);
+                                    mLoadingAnimation.setVisibility(View.VISIBLE);
+                                    mWaitImageView.setVisibility(View.VISIBLE);
+                                    mLoadingAnimation.start();
+                                    //動画が停止したら、シークバーを最初に戻して再度スタート
+                                    mLoadingAnimation.setOnCompletionListener(new MediaPlayer.OnCompletionListener(){
+                                        @Override
+                                        public void onCompletion(MediaPlayer mp) {
+                                            // 先頭に戻す
+                                            mLoadingAnimation.seekTo(0);
+                                            // 再生開始
+                                            mLoadingAnimation.start();
+                                        }
+                                    });
 
                                     Toast.makeText(MainActivity.this, "2に投票しました", Toast.LENGTH_SHORT).show();
                                 }
