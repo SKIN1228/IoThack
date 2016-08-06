@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,6 +37,7 @@ public class MainActivity extends Activity {
     private Button mButtonSendTwo;
     private ImageView mWaitImageView;
     private ImageView mSheekImage;
+    private ImageView mSheek;
     private VideoView mLoadingAnimation;
     private Vibrator mVibrator;
     private Socket mServerSocket;
@@ -57,6 +59,7 @@ public class MainActivity extends Activity {
         mButtonSendTwo = (Button)findViewById(R.id.button_send_two);
         mWaitImageView = (ImageView) findViewById(R.id.title);
         mSheekImage=(ImageView)findViewById(R.id.mSheekImage);
+        mSheek=(ImageView)findViewById(R.id.seek);
         mVibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
 
         mButtonSendOne.setVisibility(View.INVISIBLE);
@@ -114,6 +117,10 @@ public class MainActivity extends Activity {
                                         mWaitImageView.setVisibility(View.INVISIBLE);
                                         mSheekImage.setVisibility(View.VISIBLE);
                                         mLoadingAnimation.setVisibility(View.INVISIBLE);
+                                        mSheek.setVisibility(View.VISIBLE);
+                                        TranslateAnimation translate = new TranslateAnimation(0, 1300, 362, 362);
+                                        translate.setDuration(10000); // 3000msかけてアニメーションする
+                                        mSheek.startAnimation(translate); // アニメーション適用
 
                                     }
                                 });
@@ -131,6 +138,7 @@ public class MainActivity extends Activity {
                                                 mSheekImage.setVisibility(View.INVISIBLE);
                                                 mLoadingAnimation.setVisibility(View.VISIBLE);
                                                 mWaitImageView.setVisibility(View.VISIBLE);
+                                                mSheek.setVisibility(View.INVISIBLE);
                                                 mLoadingAnimation.start();
                                                 //動画が停止したら、シークバーを最初に戻して再度スタート
                                                             mLoadingAnimation.setOnCompletionListener(new MediaPlayer.OnCompletionListener(){
@@ -198,6 +206,7 @@ public class MainActivity extends Activity {
                                     mSheekImage.setVisibility(View.INVISIBLE);
                                     mLoadingAnimation.setVisibility(View.VISIBLE);
                                     mWaitImageView.setVisibility(View.VISIBLE);
+                                    mSheek.setVisibility(View.INVISIBLE);
                                     mLoadingAnimation.start();
                                     //動画が停止したら、シークバーを最初に戻して再度スタート
                                     mLoadingAnimation.setOnCompletionListener(new MediaPlayer.OnCompletionListener(){
@@ -251,6 +260,7 @@ public class MainActivity extends Activity {
                                     mSheekImage.setVisibility(View.INVISIBLE);
                                     mLoadingAnimation.setVisibility(View.VISIBLE);
                                     mWaitImageView.setVisibility(View.VISIBLE);
+                                    mSheek.setVisibility(View.INVISIBLE);
                                     mLoadingAnimation.start();
                                     //動画が停止したら、シークバーを最初に戻して再度スタート
                                     mLoadingAnimation.setOnCompletionListener(new MediaPlayer.OnCompletionListener(){
