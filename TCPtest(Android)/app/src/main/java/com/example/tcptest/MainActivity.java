@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
@@ -18,7 +19,9 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.logging.Handler;
+import android.os.Handler;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class MainActivity extends Activity {
@@ -28,15 +31,24 @@ public class MainActivity extends Activity {
     private Vibrator mVibrator;
     private Socket mServerSocket;
     private Socket mClientSocket;
+    private TextView mTextViewWait;
+    private Timer mTimerLimit = null;
+    private Handler mHandlerLimit= new Handler();
+    private int mTimerCountLimit = 5000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        final Handler handler = new Handler();
+
         mButtonSendOne = (Button)findViewById(R.id.button_send_one);
         mButtonSendTwo = (Button)findViewById(R.id.button_send_two);
         mVibrator = (Vibrator)getSystemService(VIBRATOR_SERVICE);
+        mTextViewWait = (TextView)findViewById(R.id.textView_wait);
+        mButtonSendOne.setVisibility(View.INVISIBLE);
+        mButtonSendTwo.setVisibility(View.INVISIBLE);
 
         //サーバの処理
         Runnable receiver = new Runnable() {
@@ -59,6 +71,37 @@ public class MainActivity extends Activity {
 
                             //受け取った文字列をログで表示する
                             Log.i("received", str);
+
+                            //startを受け取ったらボタンなどを表示する
+                            //別スレッドのためUI操作はhandlerの中で行う
+                            if("start".equals(str)) {
+                                runFlag = false;
+                                handler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mButtonSendOne.setVisibility(View.VISIBLE);
+                                        mButtonSendTwo.setVisibility(View.VISIBLE);
+                                        mTextViewWait.setVisibility(View.INVISIBLE);
+                                    }
+                                });
+
+                                //5秒で投票締め切り
+                                mTimerLimit = new Timer(true);
+                                mTimerLimit.schedule(new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        mHandlerLimit.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mButtonSendOne.setVisibility(View.INVISIBLE);
+                                                mButtonSendTwo.setVisibility(View.INVISIBLE);
+                                                mTextViewWait.setVisibility(View.VISIBLE);
+                                                Toast.makeText(MainActivity.this, "投票を締め切りました", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+                                }, mTimerCountLimit);
+                            }
 
                             //vibを受け取ったら振動する
                             if("vib".equals(str)){
@@ -99,6 +142,15 @@ public class MainActivity extends Activity {
                                 mClientSocket.close();
                                 mClientSocket = null;
                             }
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mButtonSendOne.setVisibility(View.INVISIBLE);
+                                    mButtonSendTwo.setVisibility(View.INVISIBLE);
+                                    mTextViewWait.setVisibility(View.VISIBLE);
+                                    Toast.makeText(MainActivity.this, "1に投票しました", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         } catch (IOException e) {
                             Log.d("IOException", e.getMessage());
                         }
@@ -129,6 +181,15 @@ public class MainActivity extends Activity {
                                 mClientSocket.close();
                                 mClientSocket = null;
                             }
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mButtonSendOne.setVisibility(View.INVISIBLE);
+                                    mButtonSendTwo.setVisibility(View.INVISIBLE);
+                                    mTextViewWait.setVisibility(View.VISIBLE);
+                                    Toast.makeText(MainActivity.this, "2に投票しました", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         } catch (IOException e) {
                             Log.d("IOException", e.getMessage());
                         }
