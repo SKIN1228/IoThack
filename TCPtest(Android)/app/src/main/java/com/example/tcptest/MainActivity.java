@@ -43,6 +43,8 @@ public class MainActivity extends Activity {
     private TextView mTextViewWait;
     private Timer mTimerLimit = null;
     private Handler mHandlerLimit= new Handler();
+    private static int PORTNUM = 5000;  //接続先のポート番号
+    private static String IPADDRESS = "192.168.11.4";  //接続先のIPAddress
     private int mTimerCountLimit = 10000;
 
     @Override
@@ -84,7 +86,7 @@ public class MainActivity extends Activity {
         Runnable receiver = new Runnable() {
             @Override
             public void run() {
-                int PORT = 10000;
+                int PORT = PORTNUM;
                 ServerSocket serverSocket = null;
 
                 try{
@@ -95,6 +97,7 @@ public class MainActivity extends Activity {
 
                         //接続があるまでブロック
                         mServerSocket = serverSocket.accept();
+                        //第二引数で文字コードの指定が可能
                         BufferedReader br = new BufferedReader(new InputStreamReader(mServerSocket.getInputStream()));
                         String str;
                         while((str = br.readLine()) != null){
@@ -181,7 +184,7 @@ public class MainActivity extends Activity {
                     public void run() {
                         try {
                             //PCのサーバに接続
-                            mClientSocket = new Socket("192.168.11.4", 10000);
+                            mClientSocket = new Socket(IPADDRESS, PORTNUM);
                             //1を投票する送る
                             PrintWriter pw = new PrintWriter(mClientSocket.getOutputStream(), true);
                             pw.println("1");
@@ -234,7 +237,7 @@ public class MainActivity extends Activity {
                     public void run() {
                         try {
                             //PCのサーバに接続
-                            mClientSocket = new Socket("192.168.11.4", 10000);
+                            mClientSocket = new Socket(IPADDRESS, PORTNUM);
                             //2を投票する送る
                             PrintWriter pw = new PrintWriter(mClientSocket.getOutputStream(), true);
                             pw.println("2");
